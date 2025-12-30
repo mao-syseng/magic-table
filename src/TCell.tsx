@@ -1,7 +1,7 @@
-interface Props {
-  x: number;
-  y: number;
+interface P {
+  isPlayer: boolean;
+  isTrail: boolean;
 }
-export default function TCell({ x, y }: Props) {
-  return <td>{x}{y}</td>;
+export default function TCell({ isPlayer, isTrail }: P) {
+  return <td>{isPlayer ? "@" : isTrail ? "o" : ""}</td>;
 }

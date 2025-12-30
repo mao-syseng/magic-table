@@ -1,24 +1,46 @@
 import { useReducer } from "react";
-import { defState, type Action, type S } from "./types";
+import { defState, type A, type S } from "./types";
 import T from "./T";
-import { useInterval } from "./helpers";
+import { useInterval, step } from "./helpers";
 
-function gameReducer(state: S, action: Action): S {
-  switch (action.type) {
+function reducer(s: S, a: A): S {
+  switch (a.type) {
     case "set_p":
-      return { ...state, p: action.p };
+      return { ...s, p: a.p };
     case "set_view":
-      return { ...state, v: action.v };
-    case "tick":
-      return { ...state, p: state.p + 1 };
+      return { ...s, v: a.v };
+    case "set_dir":
+      return { ...s, dir: a.dir };
+    case "tick": {
+      const newPos = step(s.pos, s.dir);
+      const [nx, ny] = newPos;
+      if (nx < 0 || nx > 9 || ny < 0 || ny > 9) return s;
+      const newTrail = [...s.trail, s.pos].slice(-5);
+      return { ...s, pos: newPos, p: s.p + 1, trail: newTrail };
+    }
     default:
-      return state;
+      return s;
   }
 }
 
 function App() {
-  const [s, d] = useReducer(gameReducer, defState);
-  useInterval(() => d({ type: "tick" }), 1000);
+  const [s, d] = useReducer(reducer, defState);
+  useInterval(() => d({ type: "tick" }), 400);
+
+  const h = (e: React.KeyboardEvent) => {
+    console.log(e.key);
+
+    const m: Record<string, number> = {
+      ArrowUp: 0,
+      ArrowRight: 1,
+      ArrowDown: 2,
+      ArrowLeft: 3,
+    };
+    if (e.key in m) {
+      e.preventDefault();
+      d({ type: "set_dir", dir: m[e.key] as 0 | 1 | 2 | 3 });
+    }
+  };
 
   return (
     <>
@@ -47,7 +69,7 @@ function App() {
       {s.v === 1 && (
         <>
           <h3>Table</h3>
-          <section>
+          <section tabIndex={0} onKeyDown={h}>
             <T s={s}></T>
           </section>
           <p></p>

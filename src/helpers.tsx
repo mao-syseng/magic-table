@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import type { Dir, Pos } from "./types";
 
 export function useInterval(callback: () => void, delay: number | null) {
   const savedCallback = useRef(callback);
@@ -38,3 +39,6 @@ export function Cat() {
   }, []);
   return <pre>{f}</pre>;
 }
+
+export const step = (p: Pos, d: Dir): Pos =>
+  [+p[0] + [0, 1, 0, -1][d], +p[1] + [-1, 0, 1, 0][d]] as Pos;
