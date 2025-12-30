@@ -1,22 +1,14 @@
 import { useReducer } from "react";
-import type { Action, S } from "./types";
+import { defState, type Action, type S } from "./types";
 import T from "./T";
 import { useInterval } from "./helpers";
-
-const initialState: S = {
-  view: "start",
-  pos: "00",
-  dir: 0,
-  p: 0,
-  rc: 0,
-};
 
 function gameReducer(state: S, action: Action): S {
   switch (action.type) {
     case "set_p":
       return { ...state, p: action.p };
     case "set_view":
-      return { ...state, view: action.view };
+      return { ...state, v: action.v };
     case "tick":
       return { ...state, p: state.p + 1 };
     default:
@@ -25,7 +17,7 @@ function gameReducer(state: S, action: Action): S {
 }
 
 function App() {
-  const [s, d] = useReducer(gameReducer, initialState);
+  const [s, d] = useReducer(gameReducer, defState);
   useInterval(() => d({ type: "tick" }), 1000);
 
   return (
@@ -37,22 +29,22 @@ function App() {
         </hgroup>
       </header>
 
-      {s.view === "start" && (
+      {s.v === 0 && (
         <>
           <p className="grid">
-            <button onClick={() => d({ type: "set_view", view: "table" })}>
+            <button onClick={() => d({ type: "set_view", v: 1 })}>
               Go to Table
             </button>
             <button
               className="secondary"
-              onClick={() => d({ type: "set_view", view: "upgrades" })}
+              onClick={() => d({ type: "set_view", v: 2 })}
             >
               Upgrades
             </button>
           </p>
         </>
       )}
-      {s.view === "table" && (
+      {s.v === 1 && (
         <>
           <h3>Table</h3>
           <section>
@@ -61,13 +53,13 @@ function App() {
           <p></p>
         </>
       )}
-      {s.view === "upgrades" && (
+      {s.v === 2 && (
         <>
           <h3>Upgrades</h3>
           <p>
             <button
               className="secondary"
-              onClick={() => d({ type: "set_view", view: "start" })}
+              onClick={() => d({ type: "set_view", v: 0 })}
             >
               Go back
             </button>
