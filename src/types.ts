@@ -1,17 +1,14 @@
-export type View = "start" | "museum" | "levels" | "excavate" | "upgrades";
+export type V = "start" | "table" | "upgrades";
 
-export interface GameState {
-  view: View;
-  gold: number;
-  goldPerBirb: number;
-  birbsPerMinute: number;
+export interface S {
+  view: V;
+  pos: string;
+  dir: number;
+  p: number;
+  rc: number;
 }
 
-export type GameAction =
-  | { type: "add_gold"; amount: number }
-  | { type: "spend_gold"; amount: number }
-  | { type: "add_birb"; count?: number }
-  | { type: "upgrade_gold_per_birb"; amount: number }
-  | { type: "upgrade_birbs_per_minute"; amount: number }
-  | { type: "set_view"; view: View }
+export type Action =
+  | { type: "set_p"; p: number }
+  | { type: "set_view"; view: V }
   | { type: "tick" };

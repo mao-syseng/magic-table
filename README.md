@@ -1,8 +1,8 @@
-# incremental-game
-Birbs
+# Magic Garden
+Incremental game with gameplay inspired by Magic Garden from UFO 50.
+Using just tools for normal website.
 
-Digseum like game using web technologies
-
+Will try to use no custom styling if avoidable.
 
 https://www.asciiart.eu/one-line/animals
 https://asky.lol/
@@ -35,12 +35,16 @@ worms:
 snakes:
 ∠=====≡:>
 
+# Ideas
+- Spawn after certain time
+- Each round lasts 60 ish seconds 
 
+# Glossary
+Trying for fun to write Arthur Whitney style code
+- S = State, game state object
+- A = Action, used for the state reducer
+- P = Points, games main currency
 
-Ideas:
-- title screen with different birds bouncing in bird cages using masonry layout: https://webkit.org/blog/17660/introducing-css-grid-lanes/
-
-- Game about birbs?
 
 # React + TypeScript + Vite
 

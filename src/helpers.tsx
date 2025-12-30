@@ -1,16 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export const title = ` ____    ______   ____    ____     ____       
-/\\  _\`\\ /\\__  _\\ /\\  _\`\\ /\\  _\`\\  /\\  _\`\\     
-\\ \\ \\L\\ \\/_/\\ \\/ \\ \\ \\L\\ \\ \\ \\L\\ \\\\ \\,\\L\\_\\   
- \\ \\  _ <' \\ \\ \\  \\ \\ ,  /\\ \\  _ <'\\/_\\__ \\   
-  \\ \\ \\L\\ \\ \\_\\ \\__\\ \\ \\\\ \\\\ \\ \\L\\ \\ /\\ \\L\\ \\ 
-   \\ \\____/ /\\_____\\\\ \\_\\ \\_\\ \\____/ \\ \`\\____\\
-    \\/___/  \\/_____/ \\/_/\\/ /\\/___/   \\/_____/`;
+export function useInterval(callback: () => void, delay: number | null) {
+  const savedCallback = useRef(callback);
 
-export default function Birb() {
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    if (delay === null) return;
+    function tick() {
+      savedCallback.current?.();
+    }
+    const id = setInterval(tick, delay);
+    return () => clearInterval(id);
+  }, [delay]);
+}
+
+export function Birb() {
   const f1 = "∽('▿')~";
   const f2 = "~('▿')∽";
+  const [f, setF] = useState(f1);
+  useEffect(() => {
+    const t = setInterval(() => setF((p) => (p === f1 ? f2 : f1)), 200);
+    return () => clearInterval(t);
+  }, []);
+  return <pre>{f}</pre>;
+}
+
+export function Cat() {
+  const f1 = "~(^._.)";
+  const f2 = "∽(^._.)";
   const [f, setF] = useState(f1);
   useEffect(() => {
     const t = setInterval(() => setF((p) => (p === f1 ? f2 : f1)), 200);

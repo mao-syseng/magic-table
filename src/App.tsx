@@ -1,29 +1,24 @@
 import { useReducer } from "react";
-import { useInterval } from "./useInterval";
-import type { GameAction, GameState } from "./types";
+import type { Action, S } from "./types";
+import T from "./T";
+import { useInterval } from "./helpers";
 
-const initialState: GameState = {
-  view: "museum",
-  gold: 0,
-  goldPerBirb: 1,
-  birbsPerMinute: 2,
+const initialState: S = {
+  view: "start",
+  pos: "00",
+  dir: 0,
+  p: 0,
+  rc: 0,
 };
 
-function gameReducer(state: GameState, action: GameAction): GameState {
+function gameReducer(state: S, action: Action): S {
   switch (action.type) {
-    case "add_gold":
-      return { ...state, gold: state.gold + action.amount };
-    case "spend_gold":
-      return { ...state, gold: Math.max(0, state.gold - action.amount) };
-    case "upgrade_gold_per_birb":
-      return { ...state, goldPerBirb: state.goldPerBirb + action.amount };
-    case "upgrade_birbs_per_minute":
-      return { ...state, birbsPerMinute: state.birbsPerMinute + action.amount };
+    case "set_p":
+      return { ...state, p: action.p };
     case "set_view":
       return { ...state, view: action.view };
     case "tick":
-      const goldFromBirbs = state.birbsPerMinute * state.goldPerBirb;
-      return { ...state, gold: state.gold + goldFromBirbs };
+      return { ...state, p: state.p + 1 };
     default:
       return state;
   }
@@ -34,71 +29,60 @@ function App() {
   useInterval(() => d({ type: "tick" }), 1000);
 
   return (
-    <main className="container">
+    <>
       <header>
         <hgroup>
-          <h1>Incremental Game</h1>
-          <p>Web based incremental game inspired by Digseum</p>
+          <h1>Magic Table</h1>
+          <p>Web based incremental game inspired by Magic Garden(UFO 50)</p>
         </hgroup>
       </header>
 
-      {s.view === "museum" && (
+      {s.view === "start" && (
         <>
-          <h3>Museum</h3>
-
-          <div className="grid">
-            <button onClick={() => d({ type: "set_view", view: "upgrades" })}>
-              Upgrades
+          <p className="grid">
+            <button onClick={() => d({ type: "set_view", view: "table" })}>
+              Go to Table
             </button>
             <button
               className="secondary"
-              onClick={() => d({ type: "set_view", view: "excavate" })}
+              onClick={() => d({ type: "set_view", view: "upgrades" })}
             >
-              Excavate
+              Upgrades
             </button>
-          </div>
+          </p>
         </>
       )}
-      {s.view === "excavate" && (
+      {s.view === "table" && (
         <>
-          <h3>Excavate</h3>
-          <button
-            className="secondary"
-            onClick={() => d({ type: "set_view", view: "museum" })}
-          >
-            Back to Museum
-          </button>
-          <article>
-            <p>You can excavate here to find new birbs!</p>
-          </article>
+          <h3>Table</h3>
+          <section>
+            <T s={s}></T>
+          </section>
+          <p></p>
         </>
       )}
       {s.view === "upgrades" && (
         <>
           <h3>Upgrades</h3>
-          <button
-            className="secondary"
-            onClick={() => d({ type: "set_view", view: "museum" })}
-          >
-            Back to Museum
-          </button>
+          <p>
+            <button
+              className="secondary"
+              onClick={() => d({ type: "set_view", view: "start" })}
+            >
+              Go back
+            </button>
+          </p>
           <article>
-            <p>Upgrade your birbs here!</p>
+            <h4>Upgrades</h4>
           </article>
         </>
       )}
       <article>
-        <p>
-          <em data-tooltip="Gold per birb">G/B: {s.goldPerBirb}</em>
-        </p>
-        <p>
-          <em data-tooltip="Birbs per minute">B/M: {s.birbsPerMinute}</em>
-        </p>
-        <p>
-          <em data-tooltip="Gold">G: {s.gold}</em>
+        <p className="grid">
+          <b data-tooltip="Points">* {s.p}</b>
         </p>
       </article>
-    </main>
+    </>
   );
 }
 
